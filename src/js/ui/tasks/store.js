@@ -4,6 +4,7 @@ const ACTIVE_KEY = "fokus:tarefaAtivaId";
 function createId()
 {
     const value = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    console.log("🚀 ~ createId ~ value:", value);
     return value;
 }
 
