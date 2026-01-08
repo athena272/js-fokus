@@ -26,6 +26,7 @@ export function createTimer({ onFinish } = {})
 
     let secondsLeft = DEFAULT_DURATIONS.focus;
     let intervalId = null;
+    let currentMode = 'focus';
 
     function isRunning()
     {
@@ -43,6 +44,12 @@ export function createTimer({ onFinish } = {})
         {
             playSoundEffects('beep');
             pause();
+
+            if(currentMode === 'focus')
+            {
+                document.dispatchEvent(new CustomEvent('FocoFinalizado'));
+            }
+
             onFinish?.();
             return;
         }
@@ -74,6 +81,7 @@ export function createTimer({ onFinish } = {})
 
     function setMode(mode)
     {
+        currentMode = mode;
         // quando troca o contexto, reseta o tempo do modo e pausa
         pause();
         secondsLeft = DEFAULT_DURATIONS[mode] ?? DEFAULT_DURATIONS.focus;

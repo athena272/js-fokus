@@ -150,6 +150,16 @@ export function setupTasks()
         commit();
     });
 
+    document.addEventListener('FocoFinalizado', () =>
+    {
+        if (!activeTaskId) return;
+
+        tasks = tasks.map(task =>
+        {
+            task.id === activeTaskId ? { ...task, completed: true, updatedAt: Date.now() } : task;
+        });
+    });
+
     // init
     setActive(activeTaskId);
     commit();
