@@ -1,152 +1,112 @@
-# Fokus ⏱️🎧
 
-Projeto **Fokus** é uma aplicação web inspirada na técnica Pomodoro, desenvolvida para praticar **JavaScript moderno**, **manipulação de DOM**, **arquitetura modular** e **boas práticas de organização de código**.
+# Fokus ⏱️
 
-O projeto permite alternar entre modos de foco e descanso, controlar um temporizador, tocar música de fundo e reproduzir efeitos sonoros de feedback.
+Aplicação web de produtividade inspirada na técnica **Pomodoro**, desenvolvida em JavaScript puro, com foco em **organização de código, modularidade e boas práticas**.
+
+O projeto permite alternar entre ciclos de foco e descanso, tocar música ambiente, gerenciar tarefas com persistência em `localStorage` e concluir automaticamente a tarefa ativa ao final de um ciclo de foco.
 
 ---
 
-## 📸 Funcionalidades
+## ✨ Funcionalidades
 
-- ✅ Modos de tempo:
-  - Foco
-  - Descanso curto
-  - Descanso longo
-- ⏱️ Temporizador com:
-  - Start / Pause
-  - Reset automático ao trocar de modo
-  - Exibição formatada `MM:SS`
-- 🎵 Música de fundo com toggle (on/off)
-- 🔊 Efeitos sonoros:
+### ⏲️ Timer Pomodoro
+- Modos:
+  - **Foco** (25 min)
+  - **Descanso curto** (5 min)
+  - **Descanso longo** (15 min)
+- Contagem regressiva com controle de iniciar / pausar
+- Efeitos sonoros:
   - Play
   - Pause
   - Finalização do tempo
-- 🎨 Interface dinâmica baseada em `data-context`
-- ♿ Melhorias de acessibilidade (`aria-pressed`)
-- 🧩 Código modular e escalável
+
+### 🎵 Música de foco
+- Música ambiente em loop
+- Controle por toggle
+- Tratamento de autoplay bloqueado pelo navegador
+
+### 📝 Gerenciamento de tarefas (CRUD)
+- Criar tarefas
+- Editar tarefas
+- Selecionar tarefa ativa
+- Marcar tarefas como concluídas
+- Remover tarefas concluídas
+- Remover todas as tarefas
+- Persistência via `localStorage`
+
+### 🔗 Integração Timer ↔ Tarefas
+- Ao finalizar um **ciclo de foco**, a tarefa ativa é automaticamente marcada como concluída
+- Comunicação desacoplada via **Custom Events** (`FocoFinalizado`)
 
 ---
 
-## 🗂️ Estrutura do Projeto
+## 🧠 Arquitetura
+
+O projeto foi estruturado de forma modular, separando responsabilidades e evitando acoplamento excessivo.
 
 ```
-js-dom-fojkus/
-├── index.html
-├── styles.css
-├── images/
-├── sounds/
-└── src/
-    └── js/
-        ├── main.js
-        └── ui/
-            ├── dom.js
-            ├── context.js
-            ├── audio.js
-            ├── sound-effects.js
-            └── timer.js
+src/js/
+├── main.js                 # Ponto de entrada da aplicação
+└── ui/
+    ├── audio.js            # Música de foco
+    ├── sound-effects.js    # Efeitos sonoros
+    ├── timer.js            # Lógica do timer
+    ├── context.js          # Alternância de contexto (foco / descanso)
+    ├── dom.js              # Selectors e helpers de DOM
+    └── tasks/
+        ├── controller.js   # Regras e eventos das tarefas
+        ├── render.js       # Renderização da lista de tarefas
+        └── store.js        # Estado e persistência (localStorage)
 ```
 
----
-
-## 🧠 Organização e Arquitetura
-
-### `main.js`
-Arquivo de entrada da aplicação.
-- Inicializa os módulos
-- Orquestra eventos
-- Conecta contexto, timer e áudio
-
-### `ui/dom.js`
-Infraestrutura de DOM:
-- Centraliza seletores
-- Fornece helpers (`qs`, `qsa`)
-- Evita repetição e erros silenciosos
-
-### `ui/context.js`
-Responsável por:
-- Trocar o contexto (`focus`, `short-break`, `long-break`)
-- Atualizar banner, título e estado ativo dos botões
-- Sincronizar estado global via `data-context`
-
-### `ui/timer.js`
-Gerencia o temporizador:
-- Contagem regressiva
-- Start / Pause / Toggle
-- Reset ao trocar de modo
-- Callback ao finalizar (`onFinish`)
-
-### `ui/audio.js`
-Gerencia a música de fundo:
-- Play / Pause via toggle
-- Loop automático
-- Sincronização entre UI e áudio
-
-### `ui/sound-effects.js`
-Efeitos sonoros curtos (SFX):
-- Play
-- Pause
-- Beep ao finalizar
-- Reproduz sons de forma segura e reiniciável
+### Padrões utilizados
+- **Module Pattern (ESM)**
+- **Event-driven architecture** (Custom Events)
+- **Event Delegation**
+- **Single Source of Truth**
+- **Separação de responsabilidades**
 
 ---
 
-## ▶️ Como Executar
+## 📡 Custom Events
 
-> **Importante:** use um servidor local para evitar problemas com áudio e ES Modules.
+O projeto utiliza eventos customizados para comunicação entre módulos desacoplados.
 
-### Opção 1: Live Server (VS Code)
-1. Instale a extensão **Live Server**
-2. Clique com o botão direito no `index.html`
-3. Selecione **Open with Live Server**
+Exemplo:
+- O `timer` dispara o evento `FocoFinalizado`
+- O módulo de tarefas escuta esse evento e conclui a tarefa ativa
 
-### Opção 2: Vite / outro servidor
-Qualquer servidor estático funciona, desde que sirva os arquivos pela raiz do projeto.
+Isso evita dependências diretas entre módulos e facilita a manutenção.
 
 ---
 
-## ⚙️ Configuração de Tempos
+## 🚀 Como executar
 
-No arquivo `src/js/ui/timer.js`:
+1. Clone o repositório
+2. Abra o projeto com um servidor local (ex: Live Server)
+3. Acesse `index.html`
 
-```js
-const DEFAULT_DURATIONS = {
-  focus: 25 * 60,
-  "short-break": 5 * 60,
-  "long-break": 15 * 60,
-};
-```
-
-Durante o desenvolvimento, tempos menores podem ser usados para testes rápidos.
+> ⚠️ O projeto utiliza ES Modules (`type="module"`), portanto não funciona abrindo o HTML diretamente no navegador.
 
 ---
 
-## 🚀 Possíveis Evoluções
+## 📦 Tecnologias
 
-- Persistir estado no `localStorage`
-- Fluxo Pomodoro automático (foco → pausa)
-- Ajuste de volume
-- Atalhos de teclado
-- Customização de tempos pelo usuário
-
----
-
-## 📚 Aprendizados
-
-Este projeto explora conceitos como:
-- Event delegation
-- Manipulação de atributos `data-*`
-- Modularização em JavaScript
-- Separação de responsabilidades
-- Boas práticas de arquitetura frontend
+- HTML5
+- CSS3
+- JavaScript (ES Modules)
+- Web Audio API
+- LocalStorage API
 
 ---
 
-## 🧑‍💻 Autor
+## 📚 Observações
 
-Projeto desenvolvido como estudo prático a partir de aulas da **Alura**, com melhorias arquiteturais e organizacionais.
+Este projeto foi desenvolvido com fins educacionais, inspirado em aulas da **Alura**, mas evoluído com uma estrutura mais próxima de aplicações profissionais.
 
 ---
 
 ## 📄 Licença
 
-Projeto fictício, sem fins comerciais.
+Projeto fictício, sem fins comerciais.  
+Imagens geradas por IA no Adobe Firefly.
